@@ -99,7 +99,7 @@
       ~~~
       - pressione **enter** para confirmar, caso ele não o faça automaticamente
 - antes de sair do mysql, voce deve fazer algumas inserçoes aleatorias para popular as tabelas
-  - segue abaixo o codigo para popular as tabelas:
+  - Código para popular as tabelas:
     ~~~sql
     -- Inserindo dados na tabela TB_ALUNOS
     INSERT INTO TB_ALUNOS (nome) VALUES ('Joao Silva');
