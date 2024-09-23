@@ -61,14 +61,15 @@
     - pressione **:** (dois pontos)
     - digite **wq** e aperte **enter**
       
-- instale o connector do mysql para o python
-  - faça **pip install mysql-connector-python**
+-
 - criando o container
   - faça **docker-compose up -d**
 
+instale o connector do mysql para o python
+  - faça **pip install mysql-connector-python**
 
 - criando o arquivo .py para realizar a tarefa
-  - faça **vim main.py**
+  - faça **vi main.py**
   - pressione a tecla **i** para entrar no modo INSERT do vim
   - cole o script usando **Control + Shift + V** (no meu caso é assim que cola)
 
