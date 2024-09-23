@@ -98,56 +98,6 @@
       );
       ~~~
       - pressione **enter** para confirmar, caso ele não o faça automaticamente
-- antes de sair do mysql, voce deve fazer algumas inserçoes aleatorias para popular as tabelas
-  - Código para popular as tabelas:
-    ~~~sql
-    -- Inserindo dados na tabela TB_ALUNOS
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Joao Silva');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Maria Oliveira');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Carlos Souza');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Fernanda Costa');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Bruno Almeida');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Luana Carvalho');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Ricardo Barbosa');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Sofia Martins');
-    INSERT INTO TB_ALUNOS (nome) VALUES ('Paulo Ferreira');
-
-    -- Inserindo dados na tabela TB_PROFESSOR
-    INSERT INTO TB_PROFESSOR (nome) VALUES ('Prof. Ana Lima');
-    INSERT INTO TB_PROFESSOR (nome) VALUES ('Prof. Pedro Santos');
-    INSERT INTO TB_PROFESSOR (nome) VALUES ('Prof. Carla Mendes');
-    INSERT INTO TB_PROFESSOR (nome) VALUES ('Prof. Joao Souza');
-
-    -- Inserindo dados na tabela TB_DISCIPLINA
-    INSERT INTO TB_DISCIPLINA (nome) VALUES ('Matematica');
-    INSERT INTO TB_DISCIPLINA (nome) VALUES ('Historia');
-    INSERT INTO TB_DISCIPLINA (nome) VALUES ('Fisica');
-    INSERT INTO TB_DISCIPLINA (nome) VALUES ('Quimica');
-    INSERT INTO TB_DISCIPLINA (nome) VALUES ('Biologia');
-
-    -- Inserindo dados na tabela Matricula
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (1, 1, 1, 7.5, 8.0, 2, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (2, 2, 2, 6.0, 5.5, 5, FALSE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (3, 1, 1, 9.0, 8.5, 1, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (4, 3, 3, 6.5, 7.0, 3, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (5, 4, 4, 5.0, 6.0, 6, FALSE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (6, 1, 1, 8.5, 9.0, 0, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (7, 2, 5, 7.0, 7.5, 4, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (8, 3, 3, 9.0, 8.5, 1, TRUE);
-    INSERT INTO Matricula (nome_aluno, nome_professor, disciplina, nota_N1, nota_N2, faltas, Aprovado_SN) 
-    VALUES (9, 4, 4, 5.5, 6.0, 8, FALSE);
-    ~~~
-    - pressione **enter** para confirmar, caso ele não o faça automaticamente
-- saindo do mysql
-  - faça **exit**
 
 - criando o arquivo .py para realizar a tarefa
   - faça **vim main.py**
@@ -157,90 +107,136 @@
     ~~~python
     import mysql.connector
 
-    # Conexão com o banco de dados
-    conn = mysql.connector.connect(
-        host='localhost',
-        user='myuser',
-        password='mypassword',
-        database='mydatabase'
-    )
+connect = mysql.connector.connect(
+    user= "myuser",
+    password= "mypassword",
+    host= "localhost",
+    database= "mydatabase"
+)
 
-    cursor = conn.cursor()
+cursor = connect.cursor()
 
-    # Função para executar uma consulta e exibir os resultados
-    # Função para executar uma consulta e exibir os resultados
-    def executar_consulta(query):
-        cursor.execute(query)
-        result = cursor.fetchall()
-        for row in result:
-            # Usar 'join' para formatar a saída sem parênteses ou vírgulas
-            print(", ".join(str(item) for item in row))
+tabelas = ["TB_MATRICULA", "TB_ALUNO", "TB_PROFESSOR", "TB_DISCIPLINA"]
 
-
-    # 1. Listar todos os alunos reprovados
-    query_reprovados = """
-    SELECT 
-        TB_ALUNOS.nome AS Nome_Aluno, 
-        TB_DISCIPLINA.nome AS Nome_Disciplina, 
-        TB_PROFESSOR.nome AS Nome_Professor, 
-        Matricula.nota_N1, 
-        Matricula.nota_N2, 
-        (Matricula.nota_N1 + Matricula.nota_N2) / 2 AS Media, 
-        Matricula.faltas, 
-        CASE 
-            WHEN (Matricula.nota_N1 + Matricula.nota_N2) / 2 < 6 THEN 'Reprovado por Média' 
-            WHEN Matricula.faltas > 5 THEN 'Reprovado por Falta' 
-        END AS Status_Reprovacao
-    FROM Matricula
-    JOIN TB_ALUNOS ON Matricula.nome_aluno = TB_ALUNOS.id
-    JOIN TB_DISCIPLINA ON Matricula.disciplina = TB_DISCIPLINA.id
-    JOIN TB_PROFESSOR ON Matricula.nome_professor = TB_PROFESSOR.id
-    WHERE Matricula.Aprovado_SN = FALSE;
+cursor.execute(
     """
-    print("Alunos Reprovados:")
-    executar_consulta(query_reprovados)
-
-    # 2. Listar todos os alunos aprovados
-    query_aprovados = """
-    SELECT 
-        TB_ALUNOS.nome AS Nome_Aluno, 
-        TB_DISCIPLINA.nome AS Nome_Disciplina, 
-        TB_PROFESSOR.nome AS Nome_Professor, 
-        Matricula.nota_N1, 
-        Matricula.nota_N2, 
-        (Matricula.nota_N1 + Matricula.nota_N2) / 2 AS Media, 
-        Matricula.faltas, 
-        'Aprovado por Média' AS Status_Aprovacao
-    FROM Matricula
-    JOIN TB_ALUNOS ON Matricula.nome_aluno = TB_ALUNOS.id
-    JOIN TB_DISCIPLINA ON Matricula.disciplina = TB_DISCIPLINA.id
-    JOIN TB_PROFESSOR ON Matricula.nome_professor = TB_PROFESSOR.id
-    WHERE Matricula.Aprovado_SN = TRUE;
+        CREATE TABLE IF NOT EXISTS TB_ALUNO(
+            id_aluno INT PRIMARY KEY,
+            nomeAluno VARCHAR(50) NOT NULL
+        );
     """
-    print("\nAlunos Aprovados:")
-    executar_consulta(query_aprovados)
+)
 
-    # 3. Listar a quantidade de alunos aprovados
-    query_quantidade_aprovados = """
-    SELECT COUNT(*) AS Quantidade_Aprovados
-    FROM Matricula
-    WHERE Matricula.Aprovado_SN = TRUE;
+cursor.execute(
     """
-    print("\nQuantidade de Alunos Aprovados:")
-    executar_consulta(query_quantidade_aprovados)
-
-    # 4. Listar a quantidade de alunos reprovados
-    query_quantidade_reprovados = """
-    SELECT COUNT(*) AS Quantidade_Reprovados
-    FROM Matricula
-    WHERE Matricula.Aprovado_SN = FALSE;
+        CREATE TABLE IF NOT EXISTS TB_PROFESSOR(
+            id_prof INT PRIMARY KEY,
+            nomeProf VARCHAR(50) NOT NULL,
+            disciplina VARCHAR(50) NOT NULL
+        );
     """
-    print("\nQuantidade de Alunos Reprovados:")
-    executar_consulta(query_quantidade_reprovados)
+)
 
-    # Fechando a conexão
-    cursor.close()
-    conn.close()
+cursor.execute(
+    """
+        CREATE TABLE IF NOT EXISTS TB_DISCIPLINA(
+            id_disc INT PRIMARY KEY,
+            nomeDisc VARCHAR(50) NOT NULL,
+            horas INT NOT NULL
+        );
+    """
+)
+
+cursor.execute(
+    """
+        CREATE TABLE IF NOT EXISTS TB_MATRICULA(
+            id_matricula INT PRIMARY KEY AUTO_INCREMENT,
+            id_aluno INT,
+            id_prof INT,
+            id_disc INT,
+            notaN1 DECIMAL(4,2),
+            notaN2 DECIMAL(4,2),
+            faltas INT,
+            FOREIGN KEY (id_aluno) REFERENCES TB_ALUNO(id_aluno),
+            FOREIGN KEY (id_prof) REFERENCES TB_PROFESSOR(id_prof),
+            FOREIGN KEY (id_disc) REFERENCES TB_DISCIPLINA(id_disc)
+        );
+    """
+)
+
+connect.commit()
+
+for item in range(len(tabelas)):
+    cursor.execute(f"DELETE FROM {tabelas[item]};")
+    cursor.execute(f"ALTER TABLE {tabelas[item]} AUTO_INCREMENT = 1;")
+    connect.commit()
+
+cursor.execute(
+    """
+        INSERT INTO TB_ALUNO(id_aluno, nomeAluno) 
+        VALUES (1, "Lucas"), (2, "Sabrinna"), (3, "Vinicius")
+        
+    """
+)
+
+connect.commit()
+
+cursor.execute(
+    """
+        INSERT INTO TB_PROFESSOR(id_prof, nomeProf, disciplina) 
+        VALUES (1, "Prof Alexandre", "Física"), 
+               (2, "Prof Wendell", "Redes de Computadores"), 
+               (3, "Prof Alisson", " MFDS")
+        
+    """
+)
+
+connect.commit()
+
+cursor.execute(
+    """
+    INSERT INTO TB_DISCIPLINA(id_disc, nomeDisc, horas) 
+    VALUES (1, "Física", 80),
+           (2, "Redes de Computadores", 60),
+           (3, "MFDS", 90);
+    """
+)
+
+connect.commit()
+
+cursor.execute(
+    """
+        INSERT INTO TB_MATRICULA(id_aluno, id_prof, id_disc, notaN1, notaN2, faltas) 
+        VALUES (1, 1, 1, 6.0, 8.5, 8),
+               (2, 2, 2, 6.0, 5.0, 9),
+               (3, 3, 3, 8.0, 7.0, 15);
+    """
+)
+
+connect.commit()
+
+cursor.execute(
+    """
+        SELECT A.nomeAluno, M.notaN1, M.notaN2, M.faltas
+        FROM TB_MATRICULA M
+        JOIN TB_ALUNO A ON M.id_aluno = A.id_aluno;
+    """
+)
+
+matriculas = cursor.fetchall()
+
+for matricula in matriculas:
+    nomeAluno, notaN1, notaN2, faltas = matricula
+    if ((notaN1 + notaN2)/2) < 6:
+        print(f"nome: {nomeAluno}, status: Reprovado por nota")
+    elif faltas > 10:
+        print(f"nome: {nomeAluno}, status: Reprovado por falta")
+    else:
+        print(f"nome: {nomeAluno}, status: Aprovado")
+
+
+cursor.close()
+connect.close()
 
     ~~~
     - coloque a senha **rootpassword**
